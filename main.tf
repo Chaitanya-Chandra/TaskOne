@@ -1,34 +1,25 @@
-resource "azurerm_network_security_group" "example" {
-  name                = "acceptanceTestSecurityGroup1"
-  location            = var.location
-  resource_group_name = var.resource_group
+module "vnet" {
+  source = "./modules/virtualNetworks"
+  count = var.nodes
+  name = "vnet-${var.team}-${terraform.workspace}-${lower(replace(var.location, "/ /", ""))}"
 }
 
-resource "azurerm_network_ddos_protection_plan" "example" {
-  name                = "ddospplan1"
-  location            = var.location
-  resource_group_name = var.resource_group
+module "subnet" {
+  source    = "./modules/subnets"
+  count = length(module.vnet.vnet_names[*])
+  name = "snet-${var.team}-${terraform.workspace}-${lower(replace(var.location, "/ /", ""))}"
+  vnet_name = module.vnet.vnet_names[count.index]
 }
 
-resource "azurerm_virtual_network" "example" {
-  name                = "virtualNetwork1"
-  location            = var.location
-  resource_group_name = var.resource_group
-  address_space       = ["10.0.0.0/16"]
-  dns_servers         = ["10.0.0.4", "10.0.0.5"]
+module "storage_accounts" {
+  source = "./modules/storageAccounts"
+  name = "st${var.team}storage"
+  container_name = var.container_name
+}
 
-  ddos_protection_plan {
-    id     = azurerm_network_ddos_protection_plan.example.id
-    enable = true
-  }
-
-  subnet {
-    name           = "subnet3"
-    address_prefix = "10.0.3.0/24"
-    security_group = azurerm_network_security_group.example.id
-  }
-
-  tags = {
-    environment = var.environment
-  }
+module "private_endpoint" {
+  source             = "./modules/privateendPoints"
+  count = length(module.storage_accounts.storage_account_ids[*])
+  subnet_id          = module.subnet.subnet_ids
+  storage_account_id = module.storage_accounts.storage_account_ids[count.index]
 }
