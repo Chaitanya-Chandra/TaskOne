@@ -6,9 +6,8 @@ module "vnet" {
 
 module "subnet" {
   source    = "./modules/subnets"
-  count = length(module.vnet.vnet_names[*])
   name = "snet-${var.team}-${terraform.workspace}-${lower(replace(var.location, "/ /", ""))}"
-  vnet_name = module.vnet.vnet_names[count.index]
+  vnet_name =  keys(module.vnet.vnet_names)
 }
 
 module "storage_accounts" {
@@ -19,7 +18,6 @@ module "storage_accounts" {
 
 module "private_endpoint" {
   source             = "./modules/privateendPoints"
-  count = length(module.storage_accounts.storage_account_ids[*])
-  subnet_id          = module.subnet.subnet_ids
-  storage_account_id = module.storage_accounts.storage_account_ids[count.index]
+  subnet_id          = keys(module.subnet.subnet_ids)
+  storage_account_id = keys(module.subnet.subnet_ids)
 }

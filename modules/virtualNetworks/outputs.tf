@@ -1,3 +1,6 @@
 output "vnet_names" {
-  value = azurerm_virtual_network.vnet.*.name
+  value = {
+    for vnet in azurerm_virtual_network.vnet :
+    vnet.name => vnet.id
+  }
 }
