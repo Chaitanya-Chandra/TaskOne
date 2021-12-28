@@ -1,12 +1,12 @@
 variable "resource_group_name" {
   description = "Name of the resource group to be imported."
-  type        =  string
+  type        = string
   default     = "rg-teame-dev-01"
 }
 
 variable "location" {
   description = "location of snet"
-  default = "East US"
+  default     = "East US"
 }
 
 variable "repl_type" {
@@ -40,10 +40,12 @@ variable "tls_ver" {
 }
 
 variable "name" {
-  type = string
+  description = "name of the storage account"
+  type        = string
 }
 
 variable "storage_account_count" {
-  default = 1
-  type = number
+  description = "number of storage accounts"
+  default     = 1
+  type        = number
 }

@@ -1,5 +1,5 @@
 resource "azurerm_virtual_network" "vnet" {
-  count = var.vnet_count
+  count               = var.vnet_count
   name                = "${var.name}-${format("%02d", count.index + 1)}"
   address_space       = var.address_space
   location            = var.location

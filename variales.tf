@@ -1,10 +1,10 @@
 variable "team" {
   description = "tag variable"
-  default = "teame"
+  default     = "teame"
 }
 
 variable "nodes" {
-  type = number
+  type    = number
   default = 1
 }
 

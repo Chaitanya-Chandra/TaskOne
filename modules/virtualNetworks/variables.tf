@@ -1,10 +1,10 @@
 variable "location" {
   description = "location of vnet"
-  default = "East US"
+  default     = "East US"
 }
 
 variable "vnet_count" {
-  type = number
+  type    = number
   default = 1
 }
 variable "resource_group_name" {
