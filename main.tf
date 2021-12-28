@@ -22,3 +22,17 @@ module "private_endpoint" {
   storage_account_id = keys(module.storage_accounts.storage_account_ids)
   depends_on         = [module.subnet, module.storage_accounts]
 }
+
+module "keyVault" {
+  source         = "./modules/keyVault"
+  key_vault_name = "kvs-${var.team}"
+  depends_on = [module.storage_accounts]
+}
+
+module "keyVaultSecret" {
+  source         = "./modules/keyVaultSecret"
+  key_vault_secret_name = "kvs-${var.team}"
+  value = keys(module.storage_accounts.sas_url_query_string)
+  key_vault_id = keys(module.keyVault.key_vault_ids)
+  depends_on = [module.keyVault]
+}
